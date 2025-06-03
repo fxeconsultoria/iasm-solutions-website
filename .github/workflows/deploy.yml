@@ -11,30 +11,30 @@ permissions:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-        
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-          
+
       - name: Install dependencies
         run: |
           cd iasm_website_react
-          npm install --no-package-lock
-        
+          npm install --legacy-peer-deps
+
       - name: Build project
         run: |
           cd iasm_website_react
           npm run build
         env:
           CI: false
-          
+
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: iasm_website_react/dist
           branch: gh-pages
+          folder: iasm_website_react/dist
