@@ -1,11 +1,18 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext'; // Assuming path from components/Navbar.tsx
+import LogoutButton from './auth/LogoutButton'; // Assuming path from components/Navbar.tsx
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user, isLoading } = useAuth();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const closeMenu = () => {
+    setIsMenuOpen(false);
   };
 
   return (
@@ -22,41 +29,53 @@ const Navbar = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center space-x-8">
-            <Link to="/" className="text-white hover:text-[#4a90e2] transition-colors">
-              Home
-            </Link>
-            <Link to="/sobre" className="text-white hover:text-[#4a90e2] transition-colors">
-              Sobre Nós
-            </Link>
-            <Link to="/servicos" className="text-white hover:text-[#4a90e2] transition-colors">
-              Serviços
-            </Link>
-            <Link to="/educacional" className="text-white hover:text-[#4a90e2] transition-colors">
-              Educacional
-            </Link>
-            <Link to="/cases" className="text-white hover:text-[#4a90e2] transition-colors">
-              Cases
-            </Link>
-            <Link to="/blog" className="text-white hover:text-[#4a90e2] transition-colors">
-              Blog
-            </Link>
-            <Link to="/noticias" className="text-white hover:text-[#4a90e2] transition-colors">
-              Notícias
-            </Link>
-            <Link to="/contato" className="text-white hover:text-[#4a90e2] transition-colors">
-              Contato
-            </Link>
+          <nav className="hidden lg:flex items-center space-x-6">
+            <Link to="/" className="text-white hover:text-[#4a90e2] transition-colors">Home</Link>
+            <Link to="/sobre" className="text-white hover:text-[#4a90e2] transition-colors">Sobre Nós</Link>
+            <Link to="/servicos" className="text-white hover:text-[#4a90e2] transition-colors">Serviços</Link>
+            <Link to="/educacional" className="text-white hover:text-[#4a90e2] transition-colors">Educacional</Link>
+            {/* <Link to="/cases" className="text-white hover:text-[#4a90e2] transition-colors">Cases</Link> */}
+            {/* <Link to="/blog" className="text-white hover:text-[#4a90e2] transition-colors">Blog</Link> */}
+            {/* <Link to="/noticias" className="text-white hover:text-[#4a90e2] transition-colors">Notícias</Link> */}
+            <Link to="/contato" className="text-white hover:text-[#4a90e2] transition-colors">Contato</Link>
+
+            {!isLoading && user && (
+              <>
+                <Link to="/dashboard" className="text-white hover:text-[#4a90e2] transition-colors">Dashboard</Link>
+                <Link to="/pgr" className="text-white hover:text-[#4a90e2] transition-colors">PGR</Link>
+              </>
+            )}
           </nav>
 
-          {/* CTA Button */}
-          <div className="hidden lg:block">
-            <Link 
+          {/* Auth Buttons / CTA */}
+          <div className="hidden lg:flex items-center space-x-4">
+            {!isLoading && user ? (
+              <LogoutButton />
+            ) : !isLoading ? (
+              <>
+                <Link
+                  to="/login"
+                  className="text-white hover:text-[#4a90e2] transition-colors px-4 py-2"
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/signup"
+                  className="bg-[#3498db] hover:bg-[#2980b9] text-white px-6 py-2 rounded-md transition-colors"
+                >
+                  Sign Up
+                </Link>
+              </>
+            ) : (
+              <div className="h-10 w-24 bg-gray-700 animate-pulse rounded-md"></div> // Placeholder for loading
+            )}
+             {/* Original CTA - decide if it stays or is replaced by Login/Signup */}
+             {/* <Link
               to="/servicos/diagnostico-express" 
               className="bg-[#3498db] hover:bg-[#2980b9] text-white px-6 py-2 rounded-md transition-colors"
             >
               Diagnóstico Express
-            </Link>
+            </Link> */}
           </div>
 
           {/* Mobile Menu Button */}
@@ -81,69 +100,51 @@ const Navbar = () => {
         {isMenuOpen && (
           <div className="lg:hidden mt-4 py-4 border-t border-[#2c4870]">
             <nav className="flex flex-col space-y-4">
-              <Link 
-                to="/" 
-                className="text-white hover:text-[#4a90e2] transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Home
-              </Link>
-              <Link 
-                to="/sobre" 
-                className="text-white hover:text-[#4a90e2] transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Sobre Nós
-              </Link>
-              <Link 
-                to="/servicos" 
-                className="text-white hover:text-[#4a90e2] transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Serviços
-              </Link>
-              <Link 
-                to="/educacional" 
-                className="text-white hover:text-[#4a90e2] transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Educacional
-              </Link>
-              <Link 
-                to="/cases" 
-                className="text-white hover:text-[#4a90e2] transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Cases
-              </Link>
-              <Link 
-                to="/blog" 
-                className="text-white hover:text-[#4a90e2] transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Blog
-              </Link>
-              <Link 
-                to="/noticias" 
-                className="text-white hover:text-[#4a90e2] transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Notícias
-              </Link>
-              <Link 
-                to="/contato" 
-                className="text-white hover:text-[#4a90e2] transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Contato
-              </Link>
-              <Link 
+              <Link to="/" className="text-white hover:text-[#4a90e2] transition-colors" onClick={closeMenu}>Home</Link>
+              <Link to="/sobre" className="text-white hover:text-[#4a90e2] transition-colors" onClick={closeMenu}>Sobre Nós</Link>
+              <Link to="/servicos" className="text-white hover:text-[#4a90e2] transition-colors" onClick={closeMenu}>Serviços</Link>
+              <Link to="/educacional" className="text-white hover:text-[#4a90e2] transition-colors" onClick={closeMenu}>Educacional</Link>
+              {/* <Link to="/cases" className="text-white hover:text-[#4a90e2] transition-colors" onClick={closeMenu}>Cases</Link> */}
+              {/* <Link to="/blog" className="text-white hover:text-[#4a90e2] transition-colors" onClick={closeMenu}>Blog</Link> */}
+              {/* <Link to="/noticias" className="text-white hover:text-[#4a90e2] transition-colors" onClick={closeMenu}>Notícias</Link> */}
+              <Link to="/contato" className="text-white hover:text-[#4a90e2] transition-colors" onClick={closeMenu}>Contato</Link>
+
+              {!isLoading && user && (
+                <>
+                  <Link to="/dashboard" className="text-white hover:text-[#4a90e2] transition-colors" onClick={closeMenu}>Dashboard</Link>
+                  <Link to="/pgr" className="text-white hover:text-[#4a90e2] transition-colors" onClick={closeMenu}>PGR</Link>
+                </>
+              )}
+
+              <div className="mt-4 pt-4 border-t border-[#2c4870]">
+                {!isLoading && user ? (
+                  <LogoutButton />
+                ) : !isLoading ? (
+                  <>
+                    <Link
+                      to="/login"
+                      className="block text-white hover:text-[#4a90e2] transition-colors py-2"
+                      onClick={closeMenu}
+                    >
+                      Login
+                    </Link>
+                    <Link
+                      to="/signup"
+                      className="block bg-[#3498db] hover:bg-[#2980b9] text-white px-4 py-2 rounded-md transition-colors mt-2"
+                      onClick={closeMenu}
+                    >
+                      Sign Up
+                    </Link>
+                  </>
+                ) : null}
+              </div>
+              {/* <Link
                 to="/servicos/diagnostico-express" 
                 className="bg-[#3498db] hover:bg-[#2980b9] text-white px-4 py-2 rounded-md transition-colors inline-block"
-                onClick={() => setIsMenuOpen(false)}
+                onClick={closeMenu}
               >
                 Diagnóstico Express
-              </Link>
+              </Link> */}
             </nav>
           </div>
         )}
